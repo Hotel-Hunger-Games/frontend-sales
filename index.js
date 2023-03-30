@@ -1,3 +1,4 @@
+const urlParams = new URLSearchParams(window.location.search);
 const eventsContainer = document.querySelector('.stays-grid');
 fetch('http://localhost:8080/api/auction').then(resp => resp.json()).then(data => {
    data.forEach(auction => {
@@ -6,10 +7,17 @@ fetch('http://localhost:8080/api/auction').then(resp => resp.json()).then(data =
        const auctionStartDate = new Date(auction.startDate*1000).toISOString().split('.')[0].replace('T', ' ');
        const auctionEndDate = new Date(auction.endDate*1000).toISOString().split('.')[0].replace('T', ' ');
        const roomName = auction.stay.roomDto.name;
-       const button = auction.auctionStatus === 'FINISHED'
-           ? '<a href="auction.html?id=${auction.id}"><button class="button-53" role="button">Licytacja</button></a>'
-           : '<button class="button-53 disabled" role="button" disabled>Licytacja zakończona</button>';
        const accommodationCapacity = auction.stay.roomDto.accommodationCapacity;
+       let button;
+       if (auction.auctionStatus === 'FINISHED') {
+           button = '<button class="button-53 disabled" role="button" disabled>Licytacja zakończona</button>';
+       } else if (auction.auctionStatus === 'STARTED') {
+           urlParams.set('id', auction.id)
+           button = '<a href="auction.html?'+urlParams+'"><button class="button-53 current" role="button">Licytacja trwa</button></a>';
+       } else {
+           urlParams.set('id', auction.id)
+           button = '<a href="auction.html?'+urlParams+'"><button class="button-53" role="button">Licytacja zaplanowana</button></a>';
+       }
        // console.log(auction);
        const price = auction.actualPrice;
        eventsContainer.innerHTML += `
