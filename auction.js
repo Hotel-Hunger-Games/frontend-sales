@@ -28,7 +28,8 @@ fetch(`http://localhost:8080/api/auction/${auctionId}`).then(resp => resp.json()
             </div>
         `;
     } else if (auction.auctionStatus === 'STARTED') {
-        
+        let webSocket = new WebSocket(`ws://localhost:8080/websocket`);
+        console.log(webSocket);
         auctionDiv = `
             <div class="auction current">
                 <h2>Licytacja trwa</h2>
