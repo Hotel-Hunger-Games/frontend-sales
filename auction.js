@@ -28,13 +28,23 @@ fetch(`http://localhost:8080/api/auction/${auctionId}`).then(resp => resp.json()
             </div>
         `;
     } else if (auction.auctionStatus === 'STARTED') {
-        let webSocket = new WebSocket(`ws://localhost:8080/websocket`);
-        console.log(webSocket);
+        // let webSocket = new WebSocket(`ws://localhost:8080/websocket`, [
+        //     "protocolOne",
+        //     "protocolTwo",
+        // ]);
+
         auctionDiv = `
             <div class="auction current">
                 <h2>Licytacja trwa</h2>
             </div>
         `;
+        let webSocket = Stomp.client('ws://localhost:8080/websocket');
+        var connectCallback = function() {
+            console.log("connected");
+            webSocket.send(`/app/api/auction/bid/${auction.id}`, {}, JSON.stringify({price: 20}));
+        };
+        var headers = {};
+        webSocket.connect(headers, connectCallback);
     } else {
         auctionDiv = `
             <div class="auction">
