@@ -60,6 +60,11 @@ h1 {
     touch-action: manipulation;
 }
 
+.disabled {
+    background-color: gray;
+    cursor: default;
+}
+
 .button-53:focus {
     outline: 0;
 }
@@ -74,7 +79,7 @@ h1 {
     height: calc(100% - 1px);
 }
 
-.button-53:hover:after {
+.button-53:not(.disabled):hover:after {
     bottom: 2px;
     left: 2px;
 }
