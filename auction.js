@@ -41,7 +41,7 @@ fetch(`http://localhost:8080/api/auction/${auctionId}`).then(resp => resp.json()
         let webSocket = Stomp.client('ws://localhost:8080/websocket');
         var connectCallback = function() {
             console.log("connected");
-            webSocket.send(`/app/api/auction/bid/${auction.id}`, {}, JSON.stringify({price: 20}));
+            webSocket.send(`/app/rt-auction/bid/${auction.id}`, {}, JSON.stringify({bidAmount: 20}));
         };
         var headers = {};
         webSocket.connect(headers, connectCallback);
