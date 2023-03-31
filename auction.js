@@ -35,37 +35,50 @@ fetch(`http://localhost:8080/api/auction/${auctionId}`).then(resp => resp.json()
     const accommodationCapacity = auction.stay.roomDto.accommodationCapacity;
     console.log(auction)
     let auctionDiv;
-    if (auction.auctionStatus === 'FINISHED') {
-        auctionDiv = `
-            <div class="auction finished">
-                <h2>Licytacja zakończona</h2>      
-            </div>
-        `;
-    } else if (auction.auctionStatus === 'STARTED') {
-        auctionDiv = `
-            <div class="auction current">
-                <h2>Licytacja trwa</h2>
-                <h3>Weź udział w licytacji</h3>
-                <label>Email</label>
-                <input type="text" placeholder="user@example.com" id="auction__my_email">
-                <label style="margin-left: 30px;">Kwota</label>
-                <input type="number" placeholder="2000" id="auction__my_bid">
-                <button style="margin-left: 10px;" onclick="bid(${auction.id})">Licytuj</button>
-            </div>
-        `;
-        let connectCallback = function() { console.log("connected"); };
-        webSocket.connect({}, connectCallback);
-    } else {
+    if (auction.auctionStatus === 'CREATED') {
         auctionDiv = `
             <div class="auction">
                 <h2>Licytacja zaplanowana</h2>
             </div>
         `;
+    } else {
+        if (auction.auctionStatus === 'FINISHED') {
+            auctionDiv = `
+                <div class="auction finished">
+                    <h2>Licytacja zakończona</h2>    
+                    <h3>Wygrał: ${auction.auctionWinner}</h3>  
+                </div>
+            `;
+        } else if (auction.auctionStatus === 'STARTED') {
+            auctionDiv = `
+                <div class="auction current">
+                    <h2>Licytacja trwa</h2>
+                    <h3>Weź udział w licytacji</h3>
+                    <label>Email</label>
+                    <input type="text" placeholder="user@example.com" id="auction__my_email">
+                    <label style="margin-left: 30px;">Kwota</label>
+                    <input type="number" placeholder="2000" id="auction__my_bid">
+                    <button style="margin-left: 10px;" onclick="bid(${auction.id})">Licytuj</button>
+                    
+                    <h3>Aktualnie najwyższa oferta:</h3>
+                    <h4>${auction.actualPrice}</h4>
+                </div>
+            `;
+            let connectCallback = function() { console.log("connected"); };
+            webSocket.connect({}, connectCallback);
+        }
+        if (auction.bidHistory && !auction.bidHistory.empty()) {
+            auctionDiv += '<div id="bid_history"><ol>';
+            auction.bidHistory.forEach(bid => {
+                auctionDiv += '<li>${bid.id}</li>';
+            });
+            auctionDiv += '</div></ol>';
+        }
     }
     auctionContainer.innerHTML += `
                 <h2>${roomName}</h2>
                 <h3><i>Dla ${accommodationCapacity} osób</i></h3>
-                <h4>Termin: ${reservationStartDate} - ${reservationEndDate}</h4>   
-                ${auctionDiv} 
+                <h4>Termin: ${reservationStartDate} - ${reservationEndDate}</h4>
+                ${auctionDiv}
     `;
 });
