@@ -67,10 +67,10 @@ fetch(`http://localhost:8080/api/auction/${auctionId}`).then(resp => resp.json()
             let connectCallback = function() { console.log("connected"); };
             webSocket.connect({}, connectCallback);
         }
-        if (auction.bidHistory && !auction.bidHistory.empty()) {
+        if (auction.bidHistory) {
             auctionDiv += '<div id="bid_history"><ol>';
-            auction.bidHistory.forEach(bid => {
-                auctionDiv += '<li>${bid.id}</li>';
+            auction.bidHistory.forEach(bidd => {
+                auctionDiv += `<li>${bidd.bidTime} ${bidd.email} ${bidd.price}</li>`;
             });
             auctionDiv += '</div></ol>';
         }
